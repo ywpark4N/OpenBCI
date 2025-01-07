@@ -100,7 +100,7 @@ def main():
     board = BoardShim(args.board_id, params)
 
     # Create a buffer for accumulating data
-    accumulated_data = FixedStack(size=125)
+    accumulated_data = FixedStack()
     accumulated_data.setSize(22 * 125)  # size
     accumulated_data.fill([0.0] * 13)  # Pre-fill with zeros
 
@@ -130,7 +130,10 @@ def main():
 
         # Push new entries to the buffer
         for i in range(len(data[1])):
-            new_entry = [data[j + 1][i] for j in range(13)]  # 13 is channel count.
+            new_entry = []
+            for j in range(13):
+                new_entry.append(data[j + 1][i])
+            # print("new_entry:", new_entry)
             accumulated_data.push(new_entry)
 
         # Extract recent data for processing
