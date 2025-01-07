@@ -126,7 +126,8 @@ def main():
     while True:
         data = board.get_board_data()  # get data from the board
 
-        # print("data", data[1:4, -10:])
+        # print("data[1]:", len(data[1]))
+        # print("data", data[1:4, -5:])
 
         # Push new entries to the buffer
         for i in range(len(data[1])):
@@ -176,6 +177,7 @@ def main():
 
             if impedance < 0.0:
                 impedance = 0.0
+
             data_elec_imp_ohm[j] = impedance
 
             # if j == 0:
