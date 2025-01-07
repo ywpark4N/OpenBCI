@@ -6,6 +6,8 @@ import math
 from brainflow.board_shim import BoardShim, BrainFlowInputParams, BoardIds
 from brainflow.data_filter import DataFilter, FilterTypes, NoiseTypes
 
+# The sampling rate(125) and the number of channels(13) are hardcoded for various tests and data checks.
+
 
 # stack class
 class FixedStack:
@@ -47,11 +49,11 @@ class FixedStack:
         return self.__str__()
 
 
-# get data from buffer
+# get data from stack
 def getdata(accumulated_data, max_samples):
     end_index = accumulated_data.size()  # 22 * 125 = 2,750
     start_index = max(0, end_index - max_samples)  # 2,750 - 2,750 = 0
-    # accumulated_data[ 0 : 2750 ]
+    # return accumulated_data[ 0 : 2750 ]
     return accumulated_data[start_index:end_index]
 
 
@@ -135,6 +137,7 @@ def main():
         current_data = getdata(
             accumulated_data, 22 * 125
         )  # 22(dataBuff_len_sec) * sampleing rate.
+
         # Update raw and filtered buffers
         for j in range(13):
             for i in range(22 * 125):
@@ -167,13 +170,15 @@ def main():
         for j in range(13):
             impedance = (math.sqrt(2.0) * (data_std_uV[j]) * 1.0e-6) / 6.0e-9
             impedance -= 2200.0
-            impedance = max(0.0, impedance)
+
+            if impedance < 0.0:
+                impedance = 0.0
             data_elec_imp_ohm[j] = impedance
 
             # if j == 0:
             #     print("data_elec_imp_ohm[0]: ", data_elec_imp_ohm[0])
 
-            # Print impedance for the first channel
+        # Print impedance for the first channel
         print("impedance in kΩ: ", data_elec_imp_ohm[0] / 1000)
 
         time.sleep(1)  # Sleep for 1 second
