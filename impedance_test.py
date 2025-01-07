@@ -124,9 +124,9 @@ def main():
 
     # Main loop for processing EEG data
     while True:
-        data = board.get_board_data()  # Fetch data from the board
+        data = board.get_board_data()  # get data from the board
 
-        print("data", data[1:4, -10:])
+        # print("data", data[1:4, -10:])
 
         # Push new entries to the buffer
         for i in range(len(data[1])):
