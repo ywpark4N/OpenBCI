@@ -47,21 +47,21 @@ class FixedStack:
         return self.__str__()
 
 
-# get edata from buffer
+# get data from buffer
 def getdata(accumulated_data, max_samples):
     end_index = accumulated_data.size()  # 22 * 125 = 2,750
-    start_index = max(0, end_index - max_samples)  # 5750 - 125 = 2,625
-    # accumulated_data[ 2625 : 2750 ]
+    start_index = max(0, end_index - max_samples)  # 2,750 - 2,750 = 0
+    # accumulated_data[ 0 : 2750 ]
     return accumulated_data[start_index:end_index]
 
 
-# Main function to initialize and run the program
+# Main function
 def main():
     # Enable debug logging
     BoardShim.enable_dev_board_logger()
     logging.basicConfig(level=logging.DEBUG)
 
-    # Define arguments for the script
+    # Define arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--timeout", type=int, required=False, default=0)
     parser.add_argument("--ip-port", type=int, required=False, default=0)
@@ -81,7 +81,7 @@ def main():
     )
     args = parser.parse_args()
 
-    # Configure BrainFlow board parameters
+    # board parameters
     params = BrainFlowInputParams()
     params.ip_port = args.ip_port
     params.serial_port = args.serial_port
@@ -99,7 +99,7 @@ def main():
 
     # Create a buffer for accumulating data
     accumulated_data = FixedStack(size=125)
-    accumulated_data.setSize(22 * 125)  # stack size
+    accumulated_data.setSize(22 * 125)  # size
     accumulated_data.fill([0.0] * 13)  # Pre-fill with zeros
 
     board.prepare_session()  # Prepare the session
@@ -120,16 +120,11 @@ def main():
     data_std_uV = [0] * 13  # Standard deviation for each channel
     data_elec_imp_ohm = [0] * 13  # Impedance for each channel
 
-    # check_data = [0] * 3  # To monitor data
-
     # Main loop for processing EEG data
     while True:
         data = board.get_board_data()  # Fetch data from the board
 
-        # print("data", data[1:4, -5:])
-
-        # To check stack data
-        # check_data = [len(data[1])] + check_data[:-1]
+        print("data", data[1:4, -10:])
 
         # Push new entries to the buffer
         for i in range(len(data[1])):
@@ -160,7 +155,7 @@ def main():
             DataFilter.remove_environmental_noise(temp_array, 125, NoiseTypes.SIXTY)
 
             acc_data = temp_array
-            # -int(125) > last sample rate data 125
+            # last sample rate data 125
             foo_data_filt = acc_data[-int(125) :]
             # Calculate each channel data_std_uV
             data_std_uV[j] = np.std((foo_data_filt))
@@ -178,14 +173,14 @@ def main():
             # if j == 0:
             #     print("data_elec_imp_ohm[0]: ", data_elec_imp_ohm[0])
 
-        # Print impedance for the first channel
+            # Print impedance for the first channel
         print("impedance in kΩ: ", data_elec_imp_ohm[0] / 1000)
 
         time.sleep(1)  # Sleep for 1 second
 
     # Stop the stream and release resources
-    board.stop_stream()
-    board.release_session()
+    # board.stop_stream()
+    # board.release_session()
 
 
 if __name__ == "__main__":
