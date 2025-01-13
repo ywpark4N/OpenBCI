@@ -129,8 +129,8 @@ def main():
     while True:
         data = board.get_board_data()  # get data from the board
 
-        print("data[1]:", len(data[1]))
-        print("data", data[1:4, -5:])  # Channel 1: O2, Channel 2: O1, Channel 3: T5
+        # print("data[1]:", len(data[1]))
+        # print("data", data[1:4, -5:])  # Channel 1: O2, Channel 2: O1, Channel 3: T5
 
         # Push new entries to the buffer
         for i in range(len(data[1])):
